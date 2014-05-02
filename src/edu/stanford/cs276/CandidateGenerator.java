@@ -2,6 +2,7 @@ package edu.stanford.cs276;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -39,12 +40,13 @@ public class CandidateGenerator implements Serializable {
 		' ',','};
 
 	// Generate all candidates for the target query
-	public Set<QueryWithEdits> getCandidates(String query) throws Exception {
+	public TreeSet<QueryWithEdits> getCandidates(String query) throws Exception {
 		System.out.println("Generating edit1 candidates...");
 		
 		QueryWithEdits queryObject = new QueryWithEdits(new ArrayList<String>(), query);
 		
-		TreeSet<QueryWithEdits> edits1 = getEdits1(queryObject, true); // set to false
+		// get the edits1
+		TreeSet<QueryWithEdits> edits1 = getEdits1(queryObject, false);
 		
 		System.out.println("Done with edits1. Num edits: " + edits1.size());
 		
@@ -65,8 +67,10 @@ public class CandidateGenerator implements Serializable {
 			// get edits2
 			TreeSet<QueryWithEdits> currEdits2 = getEdits2(next);
 
-			// add the edit1's to our results
-			finalCandidates.add(next);
+			// add the edit1's to our results but only if all the words are in the dictionary
+			if (checkIfWordsAreInDict(next.query, true)) {
+				finalCandidates.add(next);
+			}
 			
 			for (QueryWithEdits q : currEdits2) {
 				finalCandidates.add(q);
@@ -75,16 +79,18 @@ public class CandidateGenerator implements Serializable {
 		
 		System.out.println("Done with edits2.");
 
-		// TODO: add original query into candidate set
+		// add original query into candidate set, but only if all the words are in the dict
+		if (checkIfWordsAreInDict(query, true)) {
+			QueryWithEdits original = new QueryWithEdits(new ArrayList<String>(), query);
+			original.score = original.computeScore(query, languageModel, noisyChannelModel);
+			finalCandidates.add(original);
+		}
 		
 		return finalCandidates;
 	}
 
 	private TreeSet<QueryWithEdits> getEdits2(QueryWithEdits query) {
 		TreeSet<QueryWithEdits> edits2 = getEdits1(query, true);
-		
-		// TODO: prune (in terms of score)
-		
 		return edits2;
 	}
 
@@ -164,7 +170,7 @@ public class CandidateGenerator implements Serializable {
 		return candidates;
 	}
 
-	private void getInsertsAndSubstitutions(TreeSet<QueryWithEdits> candidates, QueryWithEdits queryWithEdits, int i, char letter, boolean isEdits2) {
+	private void getInsertsAndSubstitutions(Set<QueryWithEdits> candidates, QueryWithEdits queryWithEdits, int i, char letter, boolean isEdits2) {
 		String query = queryWithEdits.query;
 		
 		char c = query.charAt(i);
