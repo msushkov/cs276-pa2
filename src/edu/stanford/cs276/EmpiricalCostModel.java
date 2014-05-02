@@ -5,6 +5,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 
+import edu.stanford.cs276.util.QueryWithEdits;
+
 public class EmpiricalCostModel implements EditCostModel{
 	
 	public EmpiricalCostModel(String editsFile) throws IOException {
@@ -32,7 +34,7 @@ public class EmpiricalCostModel implements EditCostModel{
 	
 	// You need to update this to calculate the proper empirical cost
 	@Override
-	public double editProbability(String original, String R, int distance) {
+	public double editProbability(String original, QueryWithEdits R, int distance) {
 		return 0.5;
 		/*
 		 * Your code here

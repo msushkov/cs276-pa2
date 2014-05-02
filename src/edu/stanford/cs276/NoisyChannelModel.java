@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class NoisyChannelModel implements Serializable {
 	
 	private static NoisyChannelModel ncm_ = null;
-	EditCostModel ecm_ = null;
+	public EditCostModel ecm_ = null;
 
 	EmpiricalCostModel empiricalCostModel = null;
 	UniformCostModel uniformCostModel = null;
@@ -22,7 +22,8 @@ public class NoisyChannelModel implements Serializable {
 	
 	// Don't call the constructor directly (singleton instance)
 	private NoisyChannelModel(String editsFile) throws Exception {
-		empiricalCostModel = new EmpiricalCostModel(editsFile);
+		// empiricalCostModel = new EmpiricalCostModel(editsFile);
+		empiricalCostModel = null;
 		uniformCostModel = new UniformCostModel();
 	}
 

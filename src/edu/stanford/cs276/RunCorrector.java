@@ -3,11 +3,16 @@ package edu.stanford.cs276;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Set;
+
+import edu.stanford.cs276.util.QueryWithEdits;
 
 public class RunCorrector {
 
 	public static LanguageModel languageModel;
 	public static NoisyChannelModel nsm;
+	public static CandidateGenerator cg;
 	
 
 	public static void main(String[] args) throws Exception {
@@ -64,6 +69,8 @@ public class RunCorrector {
 		BufferedReader queriesFileReader = new BufferedReader(new FileReader(new File(queryFilePath)));
 		nsm.setProbabilityType(uniformOrEmpirical);
 		
+		cg = CandidateGenerator.get(languageModel, nsm);
+		
 		int totalCount = 0;
 		int yourCorrectCount = 0;
 		String query = null;
@@ -74,11 +81,7 @@ public class RunCorrector {
 		 */
 		while ((query = queriesFileReader.readLine()) != null) {
 			
-			String correctedQuery = query;
-			/*
-			 * Your code here
-			 */
-			
+			String correctedQuery = getBestCandidate(query);
 			
 			if ("extra".equals(extra)) {
 				/*
@@ -100,11 +103,35 @@ public class RunCorrector {
 				}
 				totalCount++;
 			}
-			System.out.println(correctedQuery);
+			
+			// System.out.println(correctedQuery);
+			System.out.println("ORIGINAL QUERY: " + query + " CORRECTED SUGGESTION: " + correctedQuery);
 		}
 		queriesFileReader.close();
 		long endTime   = System.currentTimeMillis();
 		long totalTime = endTime - startTime;
-		// System.out.println("RUNNING TIME: "+totalTime/1000+" seconds ");
+		System.out.println("RUNNING TIME: " + totalTime/1000 + " seconds ");
+	}
+	
+	/*
+	 * Ranks the candidates and returns the best one.
+	 */
+	private static String getBestCandidate(String query) throws Exception {
+		// find the highest-score candiate query
+		Set<QueryWithEdits> candidates = cg.getCandidates(query);
+		String bestGuess = "";
+		double maxScore = Double.MIN_VALUE;
+		
+		// score each of the candidates and find the best one
+		for (QueryWithEdits q : candidates) {
+			double score = q.computeScore(query, languageModel, nsm);
+			
+			if (score > maxScore) {
+				maxScore = score;
+				bestGuess = q.query;
+			}
+		}
+		
+		return bestGuess;
 	}
 }
