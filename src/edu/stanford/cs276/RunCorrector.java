@@ -83,6 +83,8 @@ public class RunCorrector {
 		 */
 		while ((query = queriesFileReader.readLine()) != null) {
 			
+			System.out.println("QUERY: " + query);
+			
 			String correctedQuery = getBestCandidate(query);
 			
 			if ("extra".equals(extra)) {
@@ -113,6 +115,8 @@ public class RunCorrector {
 		long endTime   = System.currentTimeMillis();
 		long totalTime = endTime - startTime;
 		System.out.println("RUNNING TIME: " + totalTime/1000 + " seconds ");
+		
+		System.out.println("RESULTS: # correct = " + yourCorrectCount + " , # total = " + totalCount + " , rate = " + (double) yourCorrectCount / totalCount);
 	}
 	
 	/*
@@ -122,17 +126,16 @@ public class RunCorrector {
 		// find the highest-score candidate query
 		HashSet<QueryWithEdits> candidates = cg.getCandidates(query);
 		
+		//System.out.println("Query: " + query);
+		//CandidateGenerator.debugPrint(candidates);
+		
 		String bestGuess = "";
-		double maxScore = Double.MIN_VALUE;
+		double maxScore = Double.NEGATIVE_INFINITY;
 		
 		// score each of the candidates and find the best one
 		for (QueryWithEdits suggested : candidates) {
-			double score = suggested.computeScore(query, languageModel, nsm);
-			
-			//System.out.println("Score for query: " + suggested.query + " is: " + score);
-			
-			if (score > maxScore) {
-				maxScore = score;
+			if (suggested.score > maxScore) {
+				maxScore = suggested.score;
 				bestGuess = suggested.query;
 			}
 		}

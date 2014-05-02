@@ -16,7 +16,7 @@ public class CandidateGenerator implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private static CandidateGenerator cg_;
-	private static double percentage = 0.05;
+	private static double percentage = 1.0;
 
 	private static LanguageModel languageModel;
 	private static NoisyChannelModel noisyChannelModel;
@@ -43,14 +43,10 @@ public class CandidateGenerator implements Serializable {
 
 	// Generate all candidates for the target query
 	public HashSet<QueryWithEdits> getCandidates(String query) throws Exception {
-		System.out.println("Generating edit1 candidates...");
-		
 		QueryWithEdits queryObject = new QueryWithEdits(new ArrayList<String>(), query);
 
 		// get the edits1
 		HashSet<QueryWithEdits> edits1 = getEdits1(queryObject, false, query);
-
-		System.out.println("Done with edits1. Num edit-1s: " + edits1.size());
 
 		// take some portion of edits1
 		int numElementsToTake = (int) (percentage * edits1.size());
@@ -221,6 +217,10 @@ public class CandidateGenerator implements Serializable {
 	 */
 	public static boolean checkIfWordsAreInDict(String newQuery, boolean edits2) {
 		String[] words = newQuery.split(" ");
+		
+		if (words.length == 0) {
+			return false;
+		}
 
 		// check each word in the query
 
@@ -245,7 +245,7 @@ public class CandidateGenerator implements Serializable {
 
 	public static void debugPrint(Collection<QueryWithEdits> candidates) {
 		for (QueryWithEdits q : candidates) {
-			System.out.print("candidate: " + q.query + ", ");
+			System.out.print("candidate: " + q.query + ", score: " + q.score);
 		}
 		System.out.println();
 	}

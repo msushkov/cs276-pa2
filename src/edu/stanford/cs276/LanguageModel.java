@@ -133,15 +133,11 @@ public class LanguageModel implements Serializable {
 	// without the mu
 	public double getLanguageModelScore(String candidateQuery) {
 		String[] words = candidateQuery.split(" ");
-		assert(words.length > 0);
-
-		double sum = 0;
+		
 		String prevWord = words[0];
 
 		// first word is a unigram
-		double firstWordProb = unigramProb.get(prevWord);
-
-		sum += firstWordProb;
+		double sum = unigramProb.get(prevWord);
 
 		// start with the second word
 		for (int i = 1; i < words.length; i++) {

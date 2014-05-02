@@ -23,7 +23,7 @@ public class QueryWithEdits implements Comparable {
 		
 		double noisyChannelScore = ncm.ecm_.editProbability(originalQuery, this, this.editHistory.size());
 		
-		System.out.println("Noisy channel score: " + noisyChannelScore);
+		//System.out.println("Noisy channel score: " + noisyChannelScore);
 		
 		double languageModelScore = languageModel.getLanguageModelScore(this.query);
 		
