@@ -29,4 +29,15 @@ public class QueryWithEdits implements Comparable {
 	public int compareTo(Object other) {
 		return ((Double) this.score).compareTo(((QueryWithEdits) other).score);
 	}
+	
+	// deep copy of edit history
+	public ArrayList<String> cloneEditHistory() {
+		ArrayList<String> newHistory = new ArrayList<String>();
+		
+		for (String hist : editHistory) {
+			newHistory.add(hist);
+		}
+		
+		return newHistory;
+	}
 }

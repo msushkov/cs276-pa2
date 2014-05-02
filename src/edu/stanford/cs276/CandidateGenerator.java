@@ -2,17 +2,16 @@ package edu.stanford.cs276;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import edu.stanford.cs276.util.Pair;
 import edu.stanford.cs276.util.QueryWithEdits;
 
 public class CandidateGenerator implements Serializable {
 
-
+	private static final long serialVersionUID = 1L;
+	
 	private static CandidateGenerator cg_;
 	private static double percentage = 0.5;
 
@@ -43,7 +42,9 @@ public class CandidateGenerator implements Serializable {
 	public Set<QueryWithEdits> getCandidates(String query) throws Exception {
 		System.out.println("Generating edit1 candidates...");
 		
-		TreeSet<QueryWithEdits> edits1 = getEdits1(query, true); // set to false
+		QueryWithEdits queryObject = new QueryWithEdits(new ArrayList<String>(), query);
+		
+		TreeSet<QueryWithEdits> edits1 = getEdits1(queryObject, true); // set to false
 		
 		System.out.println("Done with edits1. Num edits: " + edits1.size());
 		
@@ -80,7 +81,7 @@ public class CandidateGenerator implements Serializable {
 	}
 
 	private TreeSet<QueryWithEdits> getEdits2(QueryWithEdits query) {
-		TreeSet<QueryWithEdits> edits2 = getEdits1(query.query, true);
+		TreeSet<QueryWithEdits> edits2 = getEdits1(query, true);
 		
 		// TODO: prune (in terms of score)
 		
@@ -89,14 +90,15 @@ public class CandidateGenerator implements Serializable {
 
 	private TreeSet<QueryWithEdits> getEdits1(QueryWithEdits queryWithEdits, boolean isEdits2) {
 		TreeSet<QueryWithEdits> candidates = new TreeSet<QueryWithEdits>();
+		String query = queryWithEdits.query;
 
 		// go through each char in the alphabet
 		for (char letter : alphabet) {
 			// get the insertion before the first character
-			String newQuery = "" + letter + queryWithEdits.query; // insert the character at the beginning
+			String newQuery = "" + letter + query; // insert the character at the beginning
 
 			String currEdit = "INS_<START>_" + letter;
-			ArrayList<String> edits = queryWithEdits.editHistory.clone(); // TODO: fix!!! deep copy of the object needed
+			ArrayList<String> edits = queryWithEdits.cloneEditHistory(); // deep copy of the object
 			edits.add(currEdit);
 
 			if (checkIfWordsAreInDict(newQuery, isEdits2)) {
@@ -115,7 +117,7 @@ public class CandidateGenerator implements Serializable {
 				String newQuery = query.substring(0, i) + query.substring(i + 1);
 
 				String currEdit = "DEL_" + query.charAt(i) + "_" + query.charAt(i + 1);
-				ArrayList<String> edits = new ArrayList<String>();
+				ArrayList<String> edits = queryWithEdits.cloneEditHistory();
 				edits.add(currEdit);
 
 				if (checkIfWordsAreInDict(newQuery, isEdits2)) {
@@ -127,7 +129,7 @@ public class CandidateGenerator implements Serializable {
 				String newQuery = query.substring(0, i);
 
 				String currEdit = "DEL_" + query.charAt(i) + "_<END>";
-				ArrayList<String> edits = new ArrayList<String>();
+				ArrayList<String> edits = queryWithEdits.cloneEditHistory();
 				edits.add(currEdit);
 
 				if (checkIfWordsAreInDict(newQuery, isEdits2)) {
@@ -142,7 +144,7 @@ public class CandidateGenerator implements Serializable {
 				String newQuery = query.substring(0, i) + query.charAt(i + 1) + query.charAt(i) + query.substring(i + 2);
 
 				String currEdit = "TRANS_" + query.charAt(i) + "_" + query.charAt(i + 1);
-				ArrayList<String> edits = new ArrayList<String>();
+				ArrayList<String> edits = queryWithEdits.cloneEditHistory();
 				edits.add(currEdit);
 
 				if (checkIfWordsAreInDict(newQuery, isEdits2)) {
@@ -155,14 +157,16 @@ public class CandidateGenerator implements Serializable {
 
 			// go through each char in the alphabet
 			for (char letter : alphabet) {
-				getInsertsAndSubstitutions(candidates, query, i, letter, isEdits2);
+				getInsertsAndSubstitutions(candidates, queryWithEdits, i, letter, isEdits2);
 			}
 		}
 
 		return candidates;
 	}
 
-	private void getInsertsAndSubstitutions(TreeSet<QueryWithEdits> candidates, String query, int i, char letter, boolean isEdits2) {
+	private void getInsertsAndSubstitutions(TreeSet<QueryWithEdits> candidates, QueryWithEdits queryWithEdits, int i, char letter, boolean isEdits2) {
+		String query = queryWithEdits.query;
+		
 		char c = query.charAt(i);
 
 		// insertions
@@ -170,7 +174,7 @@ public class CandidateGenerator implements Serializable {
 		String newQuery2 = query.substring(0, i + 1) + letter + query.substring(i + 1);
 
 		String currEdit2 = "INS_" + c + "_" + letter;
-		ArrayList<String> edits2 = new ArrayList<String>();
+		ArrayList<String> edits2 = queryWithEdits.cloneEditHistory();
 		edits2.add(currEdit2);
 
 		if (checkIfWordsAreInDict(newQuery2, isEdits2)) {
@@ -185,7 +189,7 @@ public class CandidateGenerator implements Serializable {
 		String newQuery3 = query.substring(0, i) + letter + query.substring(i + 1);
 
 		String currEdit3 = "SUB_" + c + "_" + letter;
-		ArrayList<String> edits3 = new ArrayList<String>();
+		ArrayList<String> edits3 = queryWithEdits.cloneEditHistory();
 		edits3.add(currEdit3);
 
 		if (checkIfWordsAreInDict(newQuery3, isEdits2)) {
