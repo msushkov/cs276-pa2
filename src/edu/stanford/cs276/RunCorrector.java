@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -77,7 +78,7 @@ public class RunCorrector {
 		//String query = null;
 		
 		// debug
-		String query = "cat";
+		String query = "queri";
 		
 		TreeSet<QueryWithEdits> cands = cg.getCandidates(query);
 		cg.debugPrint(cands);
