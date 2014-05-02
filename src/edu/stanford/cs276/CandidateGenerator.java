@@ -49,7 +49,7 @@ public class CandidateGenerator implements Serializable {
 		// get the edits1
 		HashSet<QueryWithEdits> edits1 = getEdits1(queryObject, false, query);
 
-		System.out.println("Done with edits1. Num edits: " + edits1.size());
+		System.out.println("Done with edits1. Num edit-1s: " + edits1.size());
 
 		// take some portion of edits1
 		int numElementsToTake = (int) (percentage * edits1.size());
@@ -67,24 +67,29 @@ public class CandidateGenerator implements Serializable {
 
 			// add the edit1's to our results but only if all the words are in the dictionary
 			if (checkIfWordsAreInDict(next.query, true)) {
-				next.score = next.computeScore(query, languageModel, noisyChannelModel);
-				finalCandidates.add(next);
+				QueryWithEdits toAdd = new QueryWithEdits(next.cloneEditHistory(), next.query);
+				toAdd.score = toAdd.computeScore(toAdd.query, languageModel, noisyChannelModel);
+				finalCandidates.add(toAdd);
 			}
 
 			// get edits2
 			HashSet<QueryWithEdits> currEdits2 = getEdits2(next, query);
+			
 			for (QueryWithEdits q : currEdits2) {
-				q.score = q.computeScore(query, languageModel, noisyChannelModel);
-				finalCandidates.add(q);
+				QueryWithEdits toAdd = new QueryWithEdits(q.cloneEditHistory(), q.query);
+				toAdd.score = toAdd.computeScore(toAdd.query, languageModel, noisyChannelModel);
+				finalCandidates.add(toAdd);
 			}
+			
+			count++;
 		}
 
-		System.out.println("Done with edits2.");
+		System.out.println("Done with edits2. Num total candidates: " + finalCandidates.size());
 
 		// add original query into candidate set, but only if all the words are in the dict
 		if (checkIfWordsAreInDict(query, true)) {
 			QueryWithEdits original = new QueryWithEdits(new ArrayList<String>(), query);
-			//original.score = original.computeScore(query, languageModel, noisyChannelModel);
+			original.score = original.computeScore(query, languageModel, noisyChannelModel);
 			finalCandidates.add(original);
 		}
 

@@ -78,7 +78,7 @@ public class RunCorrector {
 		//String query = null;
 		
 		// debug
-		String query = "queri";
+		String query = "stanforr";
 		
 		TreeSet<QueryWithEdits> cands = cg.getCandidates(query);
 		cg.debugPrint(cands);
