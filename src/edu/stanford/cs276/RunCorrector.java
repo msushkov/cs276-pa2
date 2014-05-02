@@ -75,72 +75,68 @@ public class RunCorrector {
 		
 		int totalCount = 0;
 		int yourCorrectCount = 0;
-		//String query = null;
-		
-		// debug
-		String query = "stanforr";
-		
-		TreeSet<QueryWithEdits> cands = cg.getCandidates(query);
-		cg.debugPrint(cands);
-		
+		String query = null;
+
 		/*
 		 * Each line in the file represents one query.  We loop over each query and find
 		 * the most likely correction
 		 */
-//		while ((query = queriesFileReader.readLine()) != null) {
-//			
-//			String correctedQuery = getBestCandidate(query);
-//			
-//			if ("extra".equals(extra)) {
-//				/*
-//				 * If you are going to implement something regarding to running the corrector, 
-//				 * you can add code here. Feel free to move this code block to wherever 
-//				 * you think is appropriate. But make sure if you add "extra" parameter, 
-//				 * it will run code for your extra credit and it will run you basic 
-//				 * implementations without the "extra" parameter.
-//				 */	
-//			}
-//			
-//
-//			// If a gold file was provided, compare our correction to the gold correction
-//			// and output the running accuracy
-//			if (goldFileReader != null) {
-//				String goldQuery = goldFileReader.readLine();
-//				if (goldQuery.equals(correctedQuery)) {
-//					yourCorrectCount++;
-//				}
-//				totalCount++;
-//			}
-//			
-//			// System.out.println(correctedQuery);
-//			System.out.println("ORIGINAL QUERY: " + query + " CORRECTED SUGGESTION: " + correctedQuery);
-//		}
+		while ((query = queriesFileReader.readLine()) != null) {
+			
+			String correctedQuery = getBestCandidate(query);
+			
+			if ("extra".equals(extra)) {
+				/*
+				 * If you are going to implement something regarding to running the corrector, 
+				 * you can add code here. Feel free to move this code block to wherever 
+				 * you think is appropriate. But make sure if you add "extra" parameter, 
+				 * it will run code for your extra credit and it will run you basic 
+				 * implementations without the "extra" parameter.
+				 */	
+			}
+			
+
+			// If a gold file was provided, compare our correction to the gold correction
+			// and output the running accuracy
+			if (goldFileReader != null) {
+				String goldQuery = goldFileReader.readLine();
+				if (goldQuery.equals(correctedQuery)) {
+					yourCorrectCount++;
+				}
+				totalCount++;
+			}
+			
+			// System.out.println(correctedQuery);
+			System.out.println("ORIGINAL QUERY: " + query + " CORRECTED SUGGESTION: " + correctedQuery);
+		}
 		queriesFileReader.close();
 		long endTime   = System.currentTimeMillis();
 		long totalTime = endTime - startTime;
 		System.out.println("RUNNING TIME: " + totalTime/1000 + " seconds ");
 	}
 	
-	// TODO: use the TreeSets
 	/*
 	 * Ranks the candidates and returns the best one.
 	 */
 	private static String getBestCandidate(String query) throws Exception {
-//		// find the highest-score candiate query
-//		Set<QueryWithEdits> candidates = cg.getCandidates(query);
-//		String bestGuess = "";
-//		double maxScore = Double.MIN_VALUE;
-//		
-//		// score each of the candidates and find the best one
-//		for (QueryWithEdits q : candidates) {
-//			double score = q.computeScore(query, languageModel, nsm);
-//			
-//			if (score > maxScore) {
-//				maxScore = score;
-//				bestGuess = q.query;
-//			}
-//		}
+		// find the highest-score candidate query
+		HashSet<QueryWithEdits> candidates = cg.getCandidates(query);
 		
-		return null;
+		String bestGuess = "";
+		double maxScore = Double.MIN_VALUE;
+		
+		// score each of the candidates and find the best one
+		for (QueryWithEdits suggested : candidates) {
+			double score = suggested.computeScore(query, languageModel, nsm);
+			
+			//System.out.println("Score for query: " + suggested.query + " is: " + score);
+			
+			if (score > maxScore) {
+				maxScore = score;
+				bestGuess = suggested.query;
+			}
+		}
+		
+		return bestGuess;
 	}
 }

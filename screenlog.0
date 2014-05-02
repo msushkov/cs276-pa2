@@ -1,0 +1,11 @@
+bash-3.2$ ls
+README		build.xml	data		noisyChannel	screenlog.0	submit.py
+bin		buildmodels.sh	languageModel	runcorrector.sh	src
+bash-3.2$ lsbash runcorrector.sh uniform data/queries.txt data/gold.txt
+Generating edit1 candidates...
+Exception in thread "main" java.lang.NullPointerException
+	at edu.stanford.cs276.CandidateGenerator.getEdits1(CandidateGenerator.java:126)
+	at edu.stanford.cs276.CandidateGenerator.getCandidates(CandidateGenerator.java:51)
+	at edu.stanford.cs276.RunCorrector.main(RunCorrector.java:80)
+bash-3.2$ exit
+exit
