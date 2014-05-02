@@ -6,5 +6,5 @@ import edu.stanford.cs276.util.QueryWithEdits;
 
 public interface EditCostModel extends Serializable {
 
-	public double editProbability(QueryWithEdits original, QueryWithEdits R, int distance);
+	public double editProbability(String original, QueryWithEdits R, int distance);
 }

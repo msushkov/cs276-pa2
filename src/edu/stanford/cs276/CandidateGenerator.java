@@ -46,7 +46,7 @@ public class CandidateGenerator implements Serializable {
 		QueryWithEdits queryObject = new QueryWithEdits(new ArrayList<String>(), query);
 		
 		// get the edits1
-		TreeSet<QueryWithEdits> edits1 = getEdits1(queryObject, false);
+		TreeSet<QueryWithEdits> edits1 = getEdits1(queryObject, false, query);
 		
 		System.out.println("Done with edits1. Num edits: " + edits1.size());
 		
@@ -65,7 +65,7 @@ public class CandidateGenerator implements Serializable {
 			QueryWithEdits next = it.next();
 			
 			// get edits2
-			TreeSet<QueryWithEdits> currEdits2 = getEdits2(next);
+			TreeSet<QueryWithEdits> currEdits2 = getEdits2(next, query);
 
 			// add the edit1's to our results but only if all the words are in the dictionary
 			if (checkIfWordsAreInDict(next.query, true)) {
@@ -89,12 +89,12 @@ public class CandidateGenerator implements Serializable {
 		return finalCandidates;
 	}
 
-	private TreeSet<QueryWithEdits> getEdits2(QueryWithEdits query) {
-		TreeSet<QueryWithEdits> edits2 = getEdits1(query, true);
+	private TreeSet<QueryWithEdits> getEdits2(QueryWithEdits query, String originalQuery) {
+		TreeSet<QueryWithEdits> edits2 = getEdits1(query, true, originalQuery);
 		return edits2;
 	}
 
-	private TreeSet<QueryWithEdits> getEdits1(QueryWithEdits queryWithEdits, boolean isEdits2) {
+	private TreeSet<QueryWithEdits> getEdits1(QueryWithEdits queryWithEdits, boolean isEdits2, String originalQuery) {
 		TreeSet<QueryWithEdits> candidates = new TreeSet<QueryWithEdits>();
 		String query = queryWithEdits.query;
 
@@ -109,7 +109,7 @@ public class CandidateGenerator implements Serializable {
 
 			if (checkIfWordsAreInDict(newQuery, isEdits2)) {
 				QueryWithEdits newQ = new QueryWithEdits(edits, newQuery);
-				newQ.score = newQ.computeScore(newQuery, languageModel, noisyChannelModel);
+				newQ.score = newQ.computeScore(originalQuery, languageModel, noisyChannelModel);
 				candidates.add(newQ);
 			}
 		}
@@ -128,7 +128,7 @@ public class CandidateGenerator implements Serializable {
 
 				if (checkIfWordsAreInDict(newQuery, isEdits2)) {
 					QueryWithEdits newQ = new QueryWithEdits(edits, newQuery);
-					newQ.score = newQ.computeScore(newQuery, languageModel, noisyChannelModel);
+					newQ.score = newQ.computeScore(originalQuery, languageModel, noisyChannelModel);
 					candidates.add(newQ);
 				}
 			} else {
@@ -140,7 +140,7 @@ public class CandidateGenerator implements Serializable {
 
 				if (checkIfWordsAreInDict(newQuery, isEdits2)) {
 					QueryWithEdits newQ = new QueryWithEdits(edits, newQuery);
-					newQ.score = newQ.computeScore(newQuery, languageModel, noisyChannelModel);
+					newQ.score = newQ.computeScore(originalQuery, languageModel, noisyChannelModel);
 					candidates.add(newQ);
 				}
 			}
@@ -155,7 +155,7 @@ public class CandidateGenerator implements Serializable {
 
 				if (checkIfWordsAreInDict(newQuery, isEdits2)) {
 					QueryWithEdits newQ = new QueryWithEdits(edits, newQuery);
-					newQ.score = newQ.computeScore(newQuery, languageModel, noisyChannelModel);
+					newQ.score = newQ.computeScore(originalQuery, languageModel, noisyChannelModel);
 					candidates.add(newQ);
 				}
 			}
@@ -163,14 +163,14 @@ public class CandidateGenerator implements Serializable {
 
 			// go through each char in the alphabet
 			for (char letter : alphabet) {
-				getInsertsAndSubstitutions(candidates, queryWithEdits, i, letter, isEdits2);
+				getInsertsAndSubstitutions(candidates, queryWithEdits, i, letter, isEdits2, originalQuery);
 			}
 		}
 
 		return candidates;
 	}
 
-	private void getInsertsAndSubstitutions(Set<QueryWithEdits> candidates, QueryWithEdits queryWithEdits, int i, char letter, boolean isEdits2) {
+	private void getInsertsAndSubstitutions(Set<QueryWithEdits> candidates, QueryWithEdits queryWithEdits, int i, char letter, boolean isEdits2, String originalQuery) {
 		String query = queryWithEdits.query;
 		
 		char c = query.charAt(i);
@@ -185,7 +185,7 @@ public class CandidateGenerator implements Serializable {
 
 		if (checkIfWordsAreInDict(newQuery2, isEdits2)) {
 			QueryWithEdits newQ = new QueryWithEdits(edits2, newQuery2);
-			newQ.score = newQ.computeScore(newQuery2, languageModel, noisyChannelModel);
+			newQ.score = newQ.computeScore(originalQuery, languageModel, noisyChannelModel);
 			candidates.add(newQ);
 		}
 
@@ -200,7 +200,7 @@ public class CandidateGenerator implements Serializable {
 
 		if (checkIfWordsAreInDict(newQuery3, isEdits2)) {
 			QueryWithEdits newQ = new QueryWithEdits(edits3, newQuery3);
-			newQ.score = newQ.computeScore(newQuery3, languageModel, noisyChannelModel);
+			newQ.score = newQ.computeScore(originalQuery, languageModel, noisyChannelModel);
 			candidates.add(newQ);
 		}
 	}

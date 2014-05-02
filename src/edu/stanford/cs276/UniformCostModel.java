@@ -10,7 +10,7 @@ public class UniformCostModel implements EditCostModel {
 	private double ZERO_EDIT_DISTANCE_SCORE = 0.95;
 	
 	@Override
-	public double editProbability(QueryWithEdits original, QueryWithEdits R, int distance) {
+	public double editProbability(String original, QueryWithEdits R, int distance) {
 		double result = -1;
 		
 		if (distance > 0) {

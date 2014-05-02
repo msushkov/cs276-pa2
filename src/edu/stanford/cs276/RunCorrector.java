@@ -125,21 +125,21 @@ public class RunCorrector {
 	 * Ranks the candidates and returns the best one.
 	 */
 	private static String getBestCandidate(String query) throws Exception {
-		// find the highest-score candiate query
-		Set<QueryWithEdits> candidates = cg.getCandidates(query);
-		String bestGuess = "";
-		double maxScore = Double.MIN_VALUE;
+//		// find the highest-score candiate query
+//		Set<QueryWithEdits> candidates = cg.getCandidates(query);
+//		String bestGuess = "";
+//		double maxScore = Double.MIN_VALUE;
+//		
+//		// score each of the candidates and find the best one
+//		for (QueryWithEdits q : candidates) {
+//			double score = q.computeScore(query, languageModel, nsm);
+//			
+//			if (score > maxScore) {
+//				maxScore = score;
+//				bestGuess = q.query;
+//			}
+//		}
 		
-		// score each of the candidates and find the best one
-		for (QueryWithEdits q : candidates) {
-			double score = q.computeScore(query, languageModel, nsm);
-			
-			if (score > maxScore) {
-				maxScore = score;
-				bestGuess = q.query;
-			}
-		}
-		
-		return bestGuess;
+		return null;
 	}
 }

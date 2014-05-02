@@ -17,8 +17,9 @@ public class QueryWithEdits implements Comparable {
 		query = query_arg;
 	}
 
-	public double computeScore(String query, LanguageModel languageModel, NoisyChannelModel ncm) {
-		double noisyChannelScore = ncm.ecm_.editProbability(query, this, this.editHistory.size());
+	// first query is the original
+	public double computeScore(String originalQuery, LanguageModel languageModel, NoisyChannelModel ncm) {
+		double noisyChannelScore = ncm.ecm_.editProbability(originalQuery, this, this.editHistory.size());
 		double languageModelScore = languageModel.getLanguageModelScore(this.query);
 		
 		// languageModelScore has already been log-ged
