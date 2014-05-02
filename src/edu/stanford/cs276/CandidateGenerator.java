@@ -236,9 +236,9 @@ public class CandidateGenerator implements Serializable {
 		return true;
 	}
 
-	private void debugPrint(Set<QueryWithEdits> candidates) {
+	public void debugPrint(Set<QueryWithEdits> candidates) {
 		for (QueryWithEdits q : candidates) {
-			System.out.print("candidate: " + q.query + ", ");
+			System.out.print("candidate: " + q.query + "; history: " + q.editHistory + ", ");
 		}
 		System.out.println();
 	}

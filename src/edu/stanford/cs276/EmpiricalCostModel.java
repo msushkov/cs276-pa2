@@ -9,6 +9,10 @@ import edu.stanford.cs276.util.QueryWithEdits;
 
 public class EmpiricalCostModel implements EditCostModel{
 	
+	// store confusion matrices
+	
+	// store bigram count
+	
 	public EmpiricalCostModel(String editsFile) throws IOException {
 		BufferedReader input = new BufferedReader(new FileReader(editsFile));
 		System.out.println("Constructing edit distance map...");
@@ -34,7 +38,7 @@ public class EmpiricalCostModel implements EditCostModel{
 	
 	// You need to update this to calculate the proper empirical cost
 	@Override
-	public double editProbability(String original, QueryWithEdits R, int distance) {
+	public double editProbability(QueryWithEdits original, QueryWithEdits R, int distance) {
 		return 0.5;
 		/*
 		 * Your code here
