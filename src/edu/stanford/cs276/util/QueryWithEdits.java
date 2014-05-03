@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import edu.stanford.cs276.LanguageModel;
 import edu.stanford.cs276.NoisyChannelModel;
+import edu.stanford.cs276.Config;
 
 // compare by score
 public class QueryWithEdits implements Comparable {
@@ -30,7 +31,7 @@ public class QueryWithEdits implements Comparable {
 		//System.out.println("LM score: " + languageModelScore);
 		
 		// languageModelScore has already been log-ged
-		double result = noisyChannelScore + languageModel.MU * languageModelScore;
+		double result = noisyChannelScore + Config.MU * languageModelScore;
 		
 		//System.out.println("Result: " + result);
 		
