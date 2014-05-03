@@ -120,6 +120,12 @@ public class LanguageModel implements Serializable {
 		ObjectOutputStream save = new ObjectOutputStream(saveFile);
 		save.writeObject(this);
 		save.close();
+		
+		unigramProb.clear();
+		bigramProb.clear();
+		unigramProb = null;
+		bigramProb = null;
+		lm_ = null;
 	}
 
 	// Creates a new lm object from a corpus
