@@ -13,6 +13,9 @@ import java.util.HashMap;
 
 public class LanguageModel implements Serializable {
 
+	private double LAMBDA = 0.1;
+	public double MU = 1;
+
 	private static LanguageModel lm_;
 
 	// store the probabilities
@@ -87,10 +90,10 @@ public class LanguageModel implements Serializable {
 			// if we dont have this bigram in our dictionary, its prob is 0
 			double p_mle = 0;
 			if (bigramCounts.containsKey(bigram)) {
-				p_mle = Math.log(1 - Config.LAMBDA) + Math.log(bigramCounts.get(bigram)) - Math.log((double) unigramCounts.get(firstToken));
+				p_mle = Math.log(1 - LAMBDA) + Math.log(bigramCounts.get(bigram)) - Math.log((double) unigramCounts.get(firstToken));
 			}
 
-			double prob = logAdd(Math.log(Config.LAMBDA) + unigramProb.get(secondToken), p_mle);
+			double prob = logAdd(Math.log(LAMBDA) + unigramProb.get(secondToken), p_mle);
 			bigramProb.put(bigram, prob);
 		}
 
@@ -149,7 +152,7 @@ public class LanguageModel implements Serializable {
 			if (bigramProb.containsKey(currBigram)) {
 				sum += bigramProb.get(currBigram);
 			} else {				
-				sum += Math.log(Config.LAMBDA) + unigramProb.get(words[i]);
+				sum += Math.log(LAMBDA) + unigramProb.get(words[i]);
 			}
 
 			prevWord = words[i];
