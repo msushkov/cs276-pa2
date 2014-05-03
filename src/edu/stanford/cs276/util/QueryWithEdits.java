@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import edu.stanford.cs276.LanguageModel;
 import edu.stanford.cs276.NoisyChannelModel;
-import edu.stanford.cs276.Config;
 
 // compare by score
 public class QueryWithEdits implements Comparable {
@@ -20,11 +19,20 @@ public class QueryWithEdits implements Comparable {
 
 	// first query is the original
 	public double computeScore(String originalQuery, LanguageModel languageModel, NoisyChannelModel ncm) {
+		//System.out.println("Computing score for query: " + query);
+		
 		double noisyChannelScore = ncm.ecm_.editProbability(originalQuery, this, this.editHistory.size());
+		
+		//System.out.println("Noisy channel score: " + noisyChannelScore);
+		
 		double languageModelScore = languageModel.getLanguageModelScore(this.query);
 		
+		//System.out.println("LM score: " + languageModelScore);
+		
 		// languageModelScore has already been log-ged
-		double result = noisyChannelScore + Config.MU * languageModelScore;
+		double result = noisyChannelScore + languageModel.MU * languageModelScore;
+		
+		//System.out.println("Result: " + result);
 		
 		return result;
 	}

@@ -10,6 +10,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 
+import edu.stanford.cs276.Config;
+
 
 public class LanguageModel implements Serializable {
 

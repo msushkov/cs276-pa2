@@ -5,7 +5,6 @@ import edu.stanford.cs276.Config;
 
 public class UniformCostModel implements EditCostModel {
 	
-	
 	@Override
 	public double editProbability(String original, QueryWithEdits R, int distance) {
 		double result = -1;
