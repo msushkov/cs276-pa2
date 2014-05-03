@@ -51,9 +51,9 @@ public class EmpiricalCostModel implements EditCostModel{
 			String typeOfEdit = getEdit(noisy, clean);
 			
 			if (typeOfEdit.startsWith("INS")) {
-				incrementCount(delMatrix, typeOfEdit);
-			} else if (typeOfEdit.startsWith("DEL")) {
 				incrementCount(insMatrix, typeOfEdit);
+			} else if (typeOfEdit.startsWith("DEL")) {
+				incrementCount(delMatrix, typeOfEdit);
 			} else if (typeOfEdit.startsWith("SUB")) {
 				incrementCount(subMatrix, typeOfEdit);
 			} else if (typeOfEdit.startsWith("TRANS")) {
@@ -262,7 +262,7 @@ public class EmpiricalCostModel implements EditCostModel{
 				}
 				
 				StringBuffer b = new StringBuffer();
-				b.append("INS_");
+				b.append("DEL_");
 				b.append(x);
 				b.append("_");
 				b.append(y);

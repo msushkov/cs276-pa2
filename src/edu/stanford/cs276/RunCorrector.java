@@ -82,20 +82,8 @@ public class RunCorrector {
 		 * the most likely correction
 		 */
 		while ((query = queriesFileReader.readLine()) != null) {
-			
-			System.out.println("QUERY: " + query);
-			
-//			System.out.println(EmpiricalCostModel.getEdit("abcde", "bcde"));
-//			System.out.println(EmpiricalCostModel.getEdit("a", "b"));
-//			System.out.println(EmpiricalCostModel.getEdit("bcd", "abcd"));
-//			System.out.println(EmpiricalCostModel.getEdit("fbcd", "abcd"));
-			
 			QueryWithEdits correctedQueryWithEdits = cg.getCandidate(query);
 			String correctedQuery = correctedQueryWithEdits.query;
-			
-			//String correctedQuery = "john";
-			
-			System.out.println("Edit history: " + correctedQueryWithEdits.editHistory);
 			
 			if ("extra".equals(extra)) {
 				/*
@@ -118,8 +106,8 @@ public class RunCorrector {
 				totalCount++;
 			}
 			
-			// System.out.println(correctedQuery);
-			System.out.println("ORIGINAL QUERY: " + query + " CORRECTED SUGGESTION: " + correctedQuery);
+			System.out.println(correctedQuery);
+			// System.out.println("ORIGINAL QUERY: " + query + " CORRECTED SUGGESTION: " + correctedQuery);
 		}
 		queriesFileReader.close();
 		long endTime   = System.currentTimeMillis();

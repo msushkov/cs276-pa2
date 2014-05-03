@@ -14,7 +14,6 @@ public class CandidateGenerator implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private static CandidateGenerator cg_;
-	private static double percentage = 1.0;
 
 	private static LanguageModel languageModel;
 	private static NoisyChannelModel noisyChannelModel;
@@ -61,30 +60,7 @@ public class CandidateGenerator implements Serializable {
 		// get the edits1
 		HashSet<QueryWithEdits> edits1 = getEdits1(queryObject, false, query);
 
-		// take some portion of edits1
-		int numElementsToTake = (int) (percentage * edits1.size());
-
-		Iterator<QueryWithEdits> it = edits1.iterator();
-		int count = 0;
-
 		QueryWithEdits toAdd;
-		
-		// go through the first k candidates after the edit1 step
-		while (it.hasNext() && count < numElementsToTake) {
-			QueryWithEdits next = it.next();
-			
-			// the edit1's with all words in dict have already been "added" to the result 
-
-			// get edits2
-			//HashSet<QueryWithEdits> currEdits2 = getEdits2(next, query);
-			
-			// these will be "added" to the result set automatically
-			
-			//currEdits2.clear();
-			//currEdits2 = null;
-			
-			count++;
-		}
 
 		// add original query into candidate set, but only if all the words are in the dict
 		if (checkIfWordsAreInDict(query, true)) {
@@ -101,10 +77,6 @@ public class CandidateGenerator implements Serializable {
 		edits1 = null;
 
 		return bestCandidate;
-	}
-
-	private HashSet<QueryWithEdits> getEdits2(QueryWithEdits query, String originalQuery) {
-		return getEdits1(query, true, originalQuery);
 	}
 
 	private HashSet<QueryWithEdits> getEdits1(QueryWithEdits queryWithEdits, boolean isEdits2, String originalQuery) {
