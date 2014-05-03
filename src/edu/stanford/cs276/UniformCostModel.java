@@ -14,9 +14,9 @@ public class UniformCostModel implements EditCostModel {
 		double result = -1;
 		
 		if (distance > 0) {
-			result = Math.pow(SINGLE_EDIT_PROBABILITY, distance);
+			result = distance * Math.log(SINGLE_EDIT_PROBABILITY);
 		} else if (distance == 0) {
-			result = ZERO_EDIT_DISTANCE_SCORE;
+			result = Math.log(ZERO_EDIT_DISTANCE_SCORE);
 		} else {
 			System.out.println("cannot have negative edit distance!!!");
 		}

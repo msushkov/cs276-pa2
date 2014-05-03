@@ -30,7 +30,7 @@ public class QueryWithEdits implements Comparable {
 		//System.out.println("LM score: " + languageModelScore);
 		
 		// languageModelScore has already been log-ged
-		double result = Math.log(noisyChannelScore) + languageModel.MU * languageModelScore;
+		double result = noisyChannelScore + languageModel.MU * languageModelScore;
 		
 		//System.out.println("Result: " + result);
 		

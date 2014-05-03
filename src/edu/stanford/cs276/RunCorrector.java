@@ -83,8 +83,17 @@ public class RunCorrector {
 		 */
 		while ((query = queriesFileReader.readLine()) != null) {
 			
+			System.out.println("QUERY: " + query);
+			
+//			System.out.println(EmpiricalCostModel.getEdit("abcde", "bcde"));
+//			System.out.println(EmpiricalCostModel.getEdit("a", "b"));
+//			System.out.println(EmpiricalCostModel.getEdit("bcd", "abcd"));
+//			System.out.println(EmpiricalCostModel.getEdit("fbcd", "abcd"));
+			
 			QueryWithEdits correctedQueryWithEdits = cg.getCandidate(query);
 			String correctedQuery = correctedQueryWithEdits.query;
+			
+			//String correctedQuery = "john";
 			
 			System.out.println("Edit history: " + correctedQueryWithEdits.editHistory);
 			
@@ -120,27 +129,4 @@ public class RunCorrector {
 		System.out.println("RESULTS: # correct = " + yourCorrectCount + " , # total = " + totalCount + " , rate = " + (double) yourCorrectCount / totalCount);
 	}
 	
-//	/*
-//	 * Ranks the candidates and returns the best one.
-//	 */
-//	private static String getBestCandidate(String query) throws Exception {
-//		// find the highest-score candidate query
-//		HashSet<QueryWithEdits> candidates = cg.getCandidates(query);
-//		
-//		//System.out.println("Query: " + query);
-//		//CandidateGenerator.debugPrint(candidates);
-//		
-//		String bestGuess = "";
-//		double maxScore = Double.NEGATIVE_INFINITY;
-//		
-//		// score each of the candidates and find the best one
-//		for (QueryWithEdits suggested : candidates) {
-//			if (suggested.score > maxScore) {
-//				maxScore = suggested.score;
-//				bestGuess = suggested.query;
-//			}
-//		}
-//		
-//		return bestGuess;
-//	}
 }

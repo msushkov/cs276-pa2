@@ -48,7 +48,7 @@ public class EmpiricalCostModel implements EditCostModel{
 			String clean = lineSc.next();
 			
 			// Determine type of error and record probability
-			String typeOfEdit = getEdit(clean, noisy);
+			String typeOfEdit = getEdit(noisy, clean);
 			
 			if (typeOfEdit.startsWith("INS")) {
 				incrementCount(delMatrix, typeOfEdit);
@@ -56,8 +56,12 @@ public class EmpiricalCostModel implements EditCostModel{
 				incrementCount(insMatrix, typeOfEdit);
 			} else if (typeOfEdit.startsWith("SUB")) {
 				incrementCount(subMatrix, typeOfEdit);
-			} else {
+			} else if (typeOfEdit.startsWith("TRANS")) {
 				incrementCount(transMatrix, typeOfEdit);
+			}
+			
+			if (typeOfEdit.equals("")) {
+				continue;
 			}
 			
 			// count character unigrams and bigrams
@@ -78,24 +82,6 @@ public class EmpiricalCostModel implements EditCostModel{
 			bigram.append(prevChar);
 			bigram.append('$');				
 			incrementCount(charBigramCount, bigram.toString());
-			
-			
-			char prevChar2 = '$';
-			for (int i = 0; i < noisy.length(); i++) {
-				incrementCount(charUnigramCount, noisy.charAt(i));
-				
-				StringBuilder bigram2 = new StringBuilder();
-				bigram2.append(prevChar2);
-				bigram2.append(noisy.charAt(i));
-				incrementCount(charBigramCount, bigram2.toString());
-				
-				prevChar2 = noisy.charAt(i);
-			}
-			
-			StringBuilder bigram2 = new StringBuilder();
-			bigram2.append(prevChar2);
-			bigram2.append('$');				
-			incrementCount(charBigramCount, bigram2.toString());
 		}
 
 		input.close();
@@ -110,32 +96,73 @@ public class EmpiricalCostModel implements EditCostModel{
 		double prob = 0;
 		
 		for (String edit : R.editHistory) {
-			String[] letters = edit.split("_");
+			char x = '-';
+			char y = '-';
 			
 			int count = 0;
 			double denom = 0;
 			
 			if (edit.startsWith("INS")) {
-				count = insMatrix.get(edit);
-				denom = charUnigramCount.get(letters[1].charAt(0));
+				x = edit.charAt(4);
+				y = edit.charAt(6);
+				
+				if (insMatrix.containsKey(edit)) {
+					count = insMatrix.get(edit);
+				}
+				
+				if (charUnigramCount.containsKey(x)) {
+					denom = charUnigramCount.get(x);
+				}
 			} else if (edit.startsWith("DEL")) {
-				count = delMatrix.get(edit);
-				denom = charBigramCount.get(letters[1] + letters[2]);
+				x = edit.charAt(4);
+				y = edit.charAt(6);
+				
+				StringBuffer bi = new StringBuffer();
+				bi.append(x);
+				bi.append(y);
+				
+				if (delMatrix.containsKey(edit)) {
+					count = delMatrix.get(edit);
+				}
+				
+				if (charBigramCount.containsKey(bi.toString())) {
+					denom = charBigramCount.get(bi.toString());
+				}
 			} else if (edit.startsWith("SUB")) {
-				count = subMatrix.get(edit);
-				denom = charUnigramCount.get(letters[1].charAt(0));
+				x = edit.charAt(4);
+				y = edit.charAt(6);
+				
+				if (subMatrix.containsKey(edit)) {
+					count = subMatrix.get(edit);
+				}
+				
+				if (charUnigramCount.containsKey(x)) {
+					denom = charUnigramCount.get(x);
+				}
 			} else {
-				count = transMatrix.get(edit);
-				denom = charBigramCount.get(letters[1] + letters[2]);
+				x = edit.charAt(6);
+				y = edit.charAt(8);
+				
+				StringBuffer bi = new StringBuffer();
+				bi.append(x);
+				bi.append(y);
+				
+				if (transMatrix.containsKey(edit)) {
+					count = transMatrix.get(edit);
+				}
+				
+				if (charBigramCount.containsKey(bi.toString())) {
+					denom = charBigramCount.get(bi.toString());
+				}
 			}
 			
-			prob += (Math.log(count) - Math.log(denom));
+			prob += (Math.log(count + 1) - Math.log(denom + charUnigramCount.keySet().size()));
 		}
 		
 		return prob;
 	}
 	
-	private String getEdit(String original, String candidate) {
+	public static String getEdit(String original, String candidate) {
 		int origLen = original.length();
 		int candLen = candidate.length();
 		
@@ -165,7 +192,7 @@ public class EmpiricalCostModel implements EditCostModel{
 				b.append(y);
 				
 				edit = b.toString();  
-			} else {
+			} else if (mismatchedChars.size() == 2) {
 				// transposition (2 mismatches)
 				char x = mismatchedChars.get(0).getSecond().getFirst();
 				char y = mismatchedChars.get(0).getSecond().getSecond();
@@ -182,27 +209,25 @@ public class EmpiricalCostModel implements EditCostModel{
 		} else {
 			// insertion
 			if (candLen > origLen) {
-				char x = '$';
-				char y = '\u0000';
-				
+				char x = 'a';
+				char y = 'a';
+				char prevChar = '$';
 				int misMatchIndex = -1;
+				
 				for (int i = 0; i < origLen; i++) {
 					if (original.charAt(i) != candidate.charAt(i)) {
 						misMatchIndex = i;
+						x = prevChar;
 						y = candidate.charAt(i);
-						
-						if (i > 0) {
-							x = original.charAt(i - 1);
-						}
-						
 						break;
+					} else {
+						prevChar = original.charAt(i);
 					}
 				}
 				
 				// reached the end of the shorter string
 				if (misMatchIndex == -1) {
 					// candidate = original + char
-					x = original.charAt(original.length() - 1);
 					y = candidate.charAt(candidate.length() - 1); 
 				}
 				
@@ -215,29 +240,25 @@ public class EmpiricalCostModel implements EditCostModel{
 			} else {
 				// deletion (candidate is shorter)
 				
-				char x = '$';
-				char y = '\u0000';
-				
+				char x = 'a';
+				char y = 'a';
+				char prevChar = '$';
 				int misMatchIndex = -1;
+				
 				for (int i = 0; i < candLen; i++) {
 					if (original.charAt(i) != candidate.charAt(i)) {
 						misMatchIndex = i;
-						
-						if (i > 0) {
-							x = original.charAt(i - 1);
-						}
-						
+						x = prevChar;
 						y = original.charAt(i);
-						
 						break;
+					} else {
+						prevChar = original.charAt(i);
 					}
 				}
 				
 				// reached the end of the shorter string
 				if (misMatchIndex == -1) {
-					// candidate = original + char
-					x = original.charAt(original.length() - 1);
-					y = candidate.charAt(candidate.length() - 1); 
+					y = original.charAt(original.length() - 1); 
 				}
 				
 				StringBuffer b = new StringBuffer();

@@ -14,7 +14,7 @@ public class CandidateGenerator implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private static CandidateGenerator cg_;
-	private static double percentage = 0.1;
+	private static double percentage = 1.0;
 
 	private static LanguageModel languageModel;
 	private static NoisyChannelModel noisyChannelModel;
@@ -74,37 +74,14 @@ public class CandidateGenerator implements Serializable {
 			QueryWithEdits next = it.next();
 			
 			// the edit1's with all words in dict have already been "added" to the result 
-//
-//			// add the edit1's to our results but only if all the words are in the dictionary
-//			if (checkIfWordsAreInDict(next.query, true)) {
-//				toAdd = new QueryWithEdits(next.cloneEditHistory(), next.query);
-//				toAdd.score = toAdd.computeScore(toAdd.query, languageModel, noisyChannelModel);
-//				
-//				if (toAdd.score > bestScoreSoFar) {
-//					bestScoreSoFar = toAdd.score;
-//					bestCandidate = toAdd;
-//				}
-//			}
 
 			// get edits2
-			HashSet<QueryWithEdits> currEdits2 = getEdits2(next, query);
+			//HashSet<QueryWithEdits> currEdits2 = getEdits2(next, query);
 			
 			// these will be "added" to the result set automatically
 			
-//			for (QueryWithEdits q : currEdits2) {
-//				if (checkIfWordsAreInDict(q.query, true)) {
-//					toAdd = new QueryWithEdits(q.cloneEditHistory(), q.query);
-//					toAdd.score = toAdd.computeScore(toAdd.query, languageModel, noisyChannelModel);
-//
-//					if (toAdd.score > bestScoreSoFar) {
-//						bestScoreSoFar = toAdd.score;
-//						bestCandidate = toAdd;
-//					}
-//				}
-//			}
-			
-			currEdits2.clear();
-			currEdits2 = null;
+			//currEdits2.clear();
+			//currEdits2 = null;
 			
 			count++;
 		}
@@ -150,6 +127,7 @@ public class CandidateGenerator implements Serializable {
 				// only add this candidate in that case
 				if (isEdits2) {
 					newQ.score = newQ.computeScore(originalQuery, languageModel, noisyChannelModel);
+					
 					if (newQ.score > bestScoreSoFar) {
 						bestScoreSoFar = newQ.score;
 						bestCandidate = newQ;
