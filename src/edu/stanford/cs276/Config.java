@@ -11,5 +11,5 @@ public class Config {
 	public static final double ZERO_EDIT_DISTANCE_SCORE = 0.95;
 	
 	public static final double LAMBDA = 0.1;
-	public static final double MU = 1;
+	public static final double MU = 1; 
 }

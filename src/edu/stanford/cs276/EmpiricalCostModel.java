@@ -9,6 +9,7 @@ import java.util.Scanner;
 
 import edu.stanford.cs276.util.QueryWithEdits;
 import edu.stanford.cs276.util.Pair;
+import edu.stanford.cs276.Config;
 
 public class EmpiricalCostModel implements EditCostModel{
 	
@@ -94,6 +95,10 @@ public class EmpiricalCostModel implements EditCostModel{
 		// only use QueryWithEdits
 		
 		double prob = 0;
+		
+		if (R.editHistory.size() == 0) {
+			return Config.ZERO_EDIT_DISTANCE_SCORE;
+		}
 		
 		for (String edit : R.editHistory) {
 			char x = '-';
